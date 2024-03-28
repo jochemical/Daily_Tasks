@@ -1,0 +1,43 @@
+<!-- When index.html is called, we also call layout.html automatically and use this as a basic template -->
+{% extends "layout.html" %}
+ 
+{% block main_content %}
+    <section class="habit-list">
+        {% for habit in habits %}
+            {% set completed = habit["_id"] in completions %}
+            <!-- using set a new variable in jinja is created -->
+            <!-- 'habit in completions' is TRUE if the habit is present in the completions list, otherwise FALSE -->
+
+            <!-- if completed == TRUE -->
+            {% if completed %}
+                <div class="habit completed">
+                    <p class="habit__mame">
+                        {{ habit["name"] }}
+                        <!-- This displays the variable stored in 'habit["name"]', an element of a dict -->
+                    </p>
+                    <!-- The next svg displays the 'done'-icon -->
+                    <svg class="habit__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="green">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+
+            {% else %}
+                <div class="habit">
+                    <form method="POST" class="habit__form" action="{{ url_for('habits.complete') }}">
+                        <!--  so the action attribute is executed if the form is posted -->
+                        <input type="hidden" name="habitId" value="{{ habit['_id'] }}" />
+                        <input type="hidden" id="date" name="date" value="{{ selected_date }}" />
+                        <button type="submit" class="habit__button">
+                            {{ habit["name"] }}
+                            <!-- the habit name is displayed as a button, it adds a checkmark after clicked -->
+                        </button>
+
+                    </form>
+                </div>
+
+            {% endif %}
+ 
+        {% endfor %}
+        <!-- {{ habits }} -->
+    </section>
+{% endblock %}
